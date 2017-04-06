@@ -153,12 +153,7 @@ class ParameterisedTestRunner extends TestRunner
 		// END CUSTOMISATION
 		
         // CUSTOMISATION
-		$outputFile = null;
-		if ($TESTING_CONFIG['logfile']) {
-			$outputFile = BASE_PATH . '/'. $TESTING_CONFIG['logfile'];
-		}
-        
-		$reporter = new $clazz($outputFile);
+		$reporter = new $clazz();
 		$default = self::$default_reporter;
 
 		self::$default_reporter->writeHeader("Sapphire Test Runner");
@@ -184,7 +179,7 @@ class ParameterisedTestRunner extends TestRunner
 		if(!Director::is_cli()) echo '<div class="trace">';
 		
         if (method_exists($reporter, 'writeResults')) {
-            $reporter->writeResults($outputFile);
+            $reporter->writeResults();
         } else {
             $reporter->flush();
         }

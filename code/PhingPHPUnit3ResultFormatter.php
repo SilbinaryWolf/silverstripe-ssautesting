@@ -19,8 +19,6 @@
  * <http://phing.info>.
  */
 
-require_once 'PHPUnit/Framework/TestListener.php';
-
 /**
  * This abstract class describes classes that format the results of a PHPUnit2 testrun.
  *
@@ -173,6 +171,10 @@ abstract class PhingPHPUnit3ResultFormatter implements PHPUnit_Framework_TestLis
 	function addSkippedTest(PHPUnit_Framework_Test $test, Exception $e, $time)
 	{
 		$this->skipCounts[count($this->skipCounts) - 1]++;
+	}
+
+	function addRiskyTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
+		// Stub out to support PHPUnit 3.8
 	}
 	
 	function getRunCount()

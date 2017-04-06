@@ -19,8 +19,6 @@
  * <http://phing.info>.
  */
 
-require_once 'PHPUnit/Util/Log/JUnit.php';
-
 /**
  * Prints XML output of the test to a specified Writer
  *
@@ -36,10 +34,31 @@ class PhingXMLPHPUnit3ResultFormatter extends PhingPHPUnit3ResultFormatter
 	 */
 	private $logger = NULL;
 
+	/**
+	 * Output location for "testsuite.xml"
+	 *
+	 * @var string
+	 */
+	protected $outputFilename = '';
+
 	function __construct()
 	{
+		global $TESTING_CONFIG;
+		$this->outputFilename = '';
+		if (isset($TESTING_CONFIG['logfile']) && $TESTING_CONFIG['logfile']) {
+			$this->outputFilename = BASE_PATH . '/'. $TESTING_CONFIG['logfile'];
+		}
+		if (!$this->outputFilename) {
+			throw new Exception('outputFilename cannot be an empty string.');
+		}
+
 		$this->logger = new PHPUnit_Util_Log_JUnit(null, true);
 		$this->logger->setWriteDocument(false);
+	}
+
+	function __destruct() 
+	{
+		$this->writeResults();
 	}
 
 	function getExtension()
@@ -62,7 +81,6 @@ class PhingXMLPHPUnit3ResultFormatter extends PhingPHPUnit3ResultFormatter
 	function endTestSuite(PHPUnit_Framework_TestSuite $suite)
 	{
 		parent::endTestSuite($suite);
-
 		$this->logger->endTestSuite($suite);
 	}
 
@@ -76,7 +94,6 @@ class PhingXMLPHPUnit3ResultFormatter extends PhingPHPUnit3ResultFormatter
 	function endTest(PHPUnit_Framework_Test $test, $time)
 	{
 		parent::endTest($test, $time);
-
 		$this->logger->endTest($test, $time);
 	}
 
@@ -112,8 +129,8 @@ class PhingXMLPHPUnit3ResultFormatter extends PhingPHPUnit3ResultFormatter
 		}
 	}
 
-	function writeResults($fname)
+	function writeResults()
 	{
-		file_put_contents($fname, $this->logger->getXML());
+		file_put_contents($this->outputFilename, $this->logger->getXML());
 	}
 }
